@@ -10,6 +10,8 @@ function ProductMessageCard() {
   const [loading, setLoading] = useState(false)
   const [added, setAdded] = useState(false)
 
+  if (!message) return null
+
   const productId = message.productId as string | undefined
   const productName = message.productName as string | undefined
   const productPriceCents = message.productPriceCents as number | undefined
@@ -71,6 +73,11 @@ export function ChatMessageList() {
     <MessageList
       Message={(messageProps) => {
         const { message } = messageProps
+
+        if (!message) {
+          return null
+        }
+
         const isProductMessage = message.customType === "product" || !!message.productId
 
         if (isProductMessage) {
