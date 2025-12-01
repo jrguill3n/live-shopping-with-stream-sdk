@@ -1,10 +1,8 @@
 import { sql } from "@/lib/db"
 import { notFound } from "next/navigation"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { StreamChatPanel } from "@/components/StreamChatPanel"
 import { StreamLiveVideo } from "@/components/StreamLiveVideo"
+import { ViewerSidebar } from "@/components/ViewerSidebar"
 
 interface ShowPageProps {
   params: Promise<{
@@ -24,17 +22,15 @@ interface LiveShow {
   thumbnail_url: string
 }
 
-function getStatusColor(status: ShowStatus): string {
-  switch (status) {
-    case "LIVE":
-      return "bg-green-500 text-white"
-    case "PLANNED":
-      return "bg-blue-500 text-white"
-    case "ENDED":
-      return "bg-gray-500 text-white"
-    default:
-      return "bg-gray-500 text-white"
-  }
+interface Product {
+  id: number
+  sku: string
+  name: string
+  description: string | null
+  image_url: string | null
+  price_cents: number
+  currency: string
+  featured: boolean
 }
 
 export default async function ShowPage({ params }: ShowPageProps) {
@@ -60,13 +56,24 @@ export default async function ShowPage({ params }: ShowPageProps) {
     notFound()
   }
 
-  const formattedDate = new Date(show.scheduled_at).toLocaleString("en-US", {
-    dateStyle: "full",
-    timeStyle: "short",
-  })
+  const products = await sql<Product[]>`
+    SELECT 
+      p.id,
+      p.sku,
+      p.name,
+      p.description,
+      p.image_url,
+      p.price_cents,
+      p.currency,
+      sp.featured
+    FROM products p
+    JOIN show_products sp ON p.id = sp.product_id
+    WHERE sp.show_id = ${show.id} AND p.active = true
+    ORDER BY sp.sort_order ASC, p.name ASC
+  `
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       {/* Video Player Section */}
       <StreamLiveVideo showId={show.id} />
 
@@ -77,45 +84,9 @@ export default async function ShowPage({ params }: ShowPageProps) {
           <StreamChatPanel showId={show.id} />
         </div>
 
-        {/* Right Column: Products (1/3 width) */}
+        {/* Right Column: Products & Cart (1/3 width) */}
         <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Products</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-semibold mb-2">{show.title}</h3>
-                <p className="text-sm text-muted-foreground">{show.description}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge className={getStatusColor(show.status)}>{show.status}</Badge>
-              </div>
-              {show.status === "LIVE" && (
-                <div className="pt-4">
-                  <Button size="lg" className="w-full">
-                    Join Live Show Now
-                  </Button>
-                </div>
-              )}
-
-              {show.status === "PLANNED" && (
-                <div className="pt-4">
-                  <Button size="lg" variant="secondary" className="w-full">
-                    Set Reminder
-                  </Button>
-                </div>
-              )}
-
-              {show.status === "ENDED" && (
-                <div className="pt-4">
-                  <Button size="lg" variant="outline" className="w-full bg-transparent">
-                    Watch Replay
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <ViewerSidebar showId={show.id} products={products} />
         </div>
       </div>
     </div>

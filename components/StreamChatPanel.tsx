@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { StreamChat } from "stream-chat"
-import { Chat, Channel, ChannelHeader, MessageList, MessageInput, Window, Thread } from "stream-chat-react"
+import { Chat, Channel, ChannelHeader, MessageInput, Window, Thread } from "stream-chat-react"
+import { ChatMessageList } from "@/components/ChatMessageList"
 import { getMockUser } from "@/lib/mockUser"
 import "stream-chat-react/dist/css/v2/index.css"
 
@@ -110,7 +111,7 @@ export function StreamChatPanel({ showId }: StreamChatPanelProps) {
         <Channel channel={channel}>
           <Window>
             <ChannelHeader />
-            <MessageList />
+            <ChatMessageList />
             <MessageInput />
           </Window>
           <Thread />

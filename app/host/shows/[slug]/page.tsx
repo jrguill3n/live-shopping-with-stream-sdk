@@ -4,6 +4,7 @@ import { HostBroadcastPanel } from "@/components/HostBroadcastPanel"
 import { StreamChatPanel } from "@/components/StreamChatPanel"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { HostProductTools } from "@/components/HostProductTools"
 
 type ShowStatus = "PLANNED" | "LIVE" | "ENDED"
 
@@ -15,6 +16,13 @@ interface LiveShow {
   status: ShowStatus
   scheduled_at: string
   host_id: number
+}
+
+interface Product {
+  id: number
+  name: string
+  price_cents: number
+  image_url: string | null
 }
 
 interface PageProps {
@@ -56,6 +64,18 @@ export default async function HostDashboardPage({ params }: PageProps) {
 
   const show = shows[0]
 
+  const products = await sql<Product[]>`
+    SELECT 
+      p.id,
+      p.name,
+      p.price_cents,
+      p.image_url
+    FROM products p
+    INNER JOIN show_products sp ON sp.product_id = p.id
+    WHERE sp.show_id = ${show.id}
+    ORDER BY sp.sort_order ASC
+  `
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -76,6 +96,9 @@ export default async function HostDashboardPage({ params }: PageProps) {
 
         {/* Right: Chat + Info */}
         <div className="space-y-6">
+          {/* Host Product Tools */}
+          <HostProductTools showId={show.id.toString()} products={products} />
+
           {/* Quick Info Card */}
           <Card>
             <CardHeader>
