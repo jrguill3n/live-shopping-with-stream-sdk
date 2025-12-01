@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       token,
       apiKey,
       userId,
+      userName,
     })
   } catch (error) {
     console.error("Error generating Stream token:", error)

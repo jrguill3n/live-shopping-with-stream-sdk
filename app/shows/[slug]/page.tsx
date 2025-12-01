@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { StreamChatPanel } from "@/components/StreamChatPanel"
+import { StreamLiveVideo } from "@/components/StreamLiveVideo"
 
 interface ShowPageProps {
   params: Promise<{
@@ -67,9 +68,7 @@ export default async function ShowPage({ params }: ShowPageProps) {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Video Player Section */}
-      <div className="w-full h-64 rounded-xl bg-neutral-900 flex items-center justify-center text-neutral-200 text-xl font-semibold">
-        Live video player coming soon
-      </div>
+      <StreamLiveVideo showId={show.id} />
 
       {/* Two Column Layout: Chat & Products */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

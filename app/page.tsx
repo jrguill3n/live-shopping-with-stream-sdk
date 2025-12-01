@@ -49,6 +49,8 @@ export default async function HomePage() {
       scheduled_at DESC
   `
 
+  const isHostMode = true // Set to true to show host dashboard links
+
   return (
     <div className="space-y-6">
       <div>
@@ -67,10 +69,15 @@ export default async function HomePage() {
               <CardDescription>{show.description}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1" />
-            <CardFooter>
-              <Button asChild className="w-full">
+            <CardFooter className="flex gap-2">
+              <Button asChild className="flex-1">
                 <Link href={`/shows/${show.slug}`}>{show.status === "LIVE" ? "Join Now" : "View Details"}</Link>
               </Button>
+              {isHostMode && (
+                <Button asChild variant="outline" className="flex-1 bg-transparent">
+                  <Link href={`/host/shows/${show.slug}`}>Host Dashboard</Link>
+                </Button>
+              )}
             </CardFooter>
           </Card>
         ))}
