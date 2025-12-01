@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { StreamVideo, StreamVideoClient, type Call as StreamCall } from "@stream-io/video-react-sdk"
-import { StreamCall as CallComponent, CallContent } from "@stream-io/video-react-sdk"
+import { StreamVideo, StreamVideoClient, StreamCall, CallContent } from "@stream-io/video-react-sdk"
+import type { Call } from "@stream-io/video-react-sdk"
 import "@stream-io/video-react-sdk/dist/css/styles.css"
 import { getMockUser } from "@/lib/mockUser"
 
@@ -12,7 +12,7 @@ interface StreamLiveVideoProps {
 
 export function StreamLiveVideo({ showId }: StreamLiveVideoProps) {
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null)
-  const [call, setCall] = useState<StreamCall | null>(null)
+  const [call, setCall] = useState<Call | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -92,9 +92,9 @@ export function StreamLiveVideo({ showId }: StreamLiveVideoProps) {
   return (
     <div className="w-full rounded-xl overflow-hidden">
       <StreamVideo client={videoClient}>
-        <CallComponent call={call}>
+        <StreamCall call={call}>
           <CallContent />
-        </CallComponent>
+        </StreamCall>
       </StreamVideo>
     </div>
   )
