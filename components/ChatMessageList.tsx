@@ -10,11 +10,13 @@ function ProductMessageCard() {
   const [loading, setLoading] = useState(false)
   const [added, setAdded] = useState(false)
 
-  const productId = (message as any).productId as string | undefined
-  const productName = (message as any).productName as string | undefined
-  const productPriceCents = (message as any).productPriceCents as number | undefined
-  const productImageUrl = (message as any).productImageUrl as string | undefined
-  const showId = (message as any).showId as string | undefined
+  const productId = message.productId as string | undefined
+  const productName = message.productName as string | undefined
+  const productPriceCents = message.productPriceCents as number | undefined
+  const productImageUrl = message.productImageUrl as string | undefined
+  const showId = message.showId as string | undefined
+
+  console.log("[v0] Product message data:", { productId, productName, productPriceCents, showId })
 
   // If not a product message, render normally
   if (!productId || !productName || !productPriceCents) {
@@ -69,7 +71,7 @@ export function ChatMessageList() {
     <MessageList
       Message={(messageProps) => {
         const { message } = messageProps
-        const isProductMessage = !!(message as any).productId
+        const isProductMessage = message.customType === "product" || !!message.productId
 
         if (isProductMessage) {
           return (

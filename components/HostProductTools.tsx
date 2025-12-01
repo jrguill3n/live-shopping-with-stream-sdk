@@ -41,12 +41,13 @@ export function HostProductTools({ showId, products }: HostProductToolsProps) {
     try {
       await channel.sendMessage({
         text: `🛍️ Check out: ${selectedProduct.name}`,
-        showId,
+        customType: "product",
         productId: selectedProduct.id.toString(),
         productName: selectedProduct.name,
         productPriceCents: selectedProduct.price_cents,
         productImageUrl: selectedProduct.image_url,
-      } as any)
+        showId: showId,
+      })
 
       console.log("[v0] Product sent successfully")
     } catch (err) {
