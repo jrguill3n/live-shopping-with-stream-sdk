@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation"
 import { sql } from "@/lib/db"
 import { HostBroadcastPanel } from "@/components/HostBroadcastPanel"
-import { StreamChatPanel } from "@/components/StreamChatPanel"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { HostProductTools } from "@/components/HostProductTools"
+import { HostDashboardClient } from "@/components/HostDashboardClient"
 
 type ShowStatus = "PLANNED" | "LIVE" | "ENDED"
 
@@ -94,40 +92,8 @@ export default async function HostDashboardPage({ params }: PageProps) {
           <HostBroadcastPanel showId={show.id.toString()} showTitle={show.title} />
         </div>
 
-        {/* Right: Chat + Info */}
-        <div className="space-y-6">
-          {/* Host Product Tools */}
-          <HostProductTools showId={show.id.toString()} products={products} />
-
-          {/* Quick Info Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Show Information</CardTitle>
-              <CardDescription>Quick stats and details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Description</p>
-                <p className="text-sm mt-1">{show.description}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Scheduled At</p>
-                <p className="text-sm mt-1">{new Date(show.scheduled_at).toLocaleString()}</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Chat Panel */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Live Chat</CardTitle>
-              <CardDescription>Interact with your viewers</CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <StreamChatPanel showId={show.id} />
-            </CardContent>
-          </Card>
-        </div>
+        {/* Right: Chat + Info - Client Component */}
+        <HostDashboardClient show={show} products={products} />
       </div>
     </div>
   )

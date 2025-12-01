@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { useChatContext } from "stream-chat-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { useHostChat } from "@/components/HostChatProvider"
 
 interface Product {
   id: number
@@ -18,27 +18,39 @@ interface HostProductToolsProps {
 }
 
 export function HostProductTools({ showId, products }: HostProductToolsProps) {
-  const { channel } = useChatContext()
+  const { channel } = useHostChat()
   const [selectedProductId, setSelectedProductId] = useState<string | undefined>(products[0]?.id.toString())
   const [sending, setSending] = useState(false)
 
   const selectedProduct = products.find((p) => p.id.toString() === selectedProductId)
 
   const handleSendProduct = async () => {
-    if (!channel || !selectedProduct) return
+    console.log("[v0] Send product clicked", { channel: !!channel, selectedProduct })
+
+    if (!channel) {
+      alert("Chat is not connected yet. Please wait and try again.")
+      return
+    }
+
+    if (!selectedProduct) {
+      alert("Please select a product first.")
+      return
+    }
+
     setSending(true)
     try {
       await channel.sendMessage({
         text: `🛍️ Check out: ${selectedProduct.name}`,
-        // Extra data for custom card rendering
         showId,
         productId: selectedProduct.id.toString(),
         productName: selectedProduct.name,
         productPriceCents: selectedProduct.price_cents,
         productImageUrl: selectedProduct.image_url,
       } as any)
+
+      console.log("[v0] Product sent successfully")
     } catch (err) {
-      console.error("Error sending product:", err)
+      console.error("[v0] Error sending product:", err)
       alert("Failed to send product. Please try again.")
     } finally {
       setSending(false)
@@ -83,7 +95,8 @@ export function HostProductTools({ showId, products }: HostProductToolsProps) {
             ))}
           </select>
         </div>
-        <Button onClick={handleSendProduct} disabled={sending || !selectedProduct} className="w-full">
+        {!channel && <p className="text-xs text-muted-foreground">Waiting for chat to connect...</p>}
+        <Button onClick={handleSendProduct} disabled={sending || !selectedProduct || !channel} className="w-full">
           {sending ? "Sending…" : "Send to Chat"}
         </Button>
       </CardContent>
