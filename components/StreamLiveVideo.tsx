@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { StreamVideo, StreamVideoClient, StreamCall, CallContent } from "@stream-io/video-react-sdk"
+import { StreamVideo, StreamVideoClient, StreamCall, LivestreamLayout } from "@stream-io/video-react-sdk"
 import type { Call } from "@stream-io/video-react-sdk"
 import "@stream-io/video-react-sdk/dist/css/styles.css"
 import { getMockUser } from "@/lib/mockUser"
@@ -93,7 +93,7 @@ export function StreamLiveVideo({ showId }: StreamLiveVideoProps) {
     <div className="w-full rounded-xl overflow-hidden">
       <StreamVideo client={videoClient}>
         <StreamCall call={call}>
-          <CallContent />
+          <LivestreamLayout showParticipantCount showDuration showLiveBadge />
         </StreamCall>
       </StreamVideo>
     </div>

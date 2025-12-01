@@ -1,7 +1,14 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { StreamVideo, StreamVideoClient, type Call, StreamCall } from "@stream-io/video-react-sdk"
+import {
+  StreamVideo,
+  StreamVideoClient,
+  type Call,
+  StreamCall,
+  ParticipantView,
+  useCallStateHooks,
+} from "@stream-io/video-react-sdk"
 import "@stream-io/video-react-sdk/dist/css/styles.css"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,6 +17,29 @@ import { Badge } from "@/components/ui/badge"
 interface HostBroadcastPanelProps {
   showId: string
   showTitle: string
+}
+
+function BroadcastPreview({ isInStudio }: { isInStudio: boolean }) {
+  const { useLocalParticipant } = useCallStateHooks()
+  const localParticipant = useLocalParticipant()
+
+  if (!isInStudio || !localParticipant) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-white">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🎥</div>
+          <p className="text-lg font-semibold">Ready to broadcast</p>
+          <p className="text-sm text-gray-300 mt-2">Join the studio to start your stream</p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-full h-full">
+      <ParticipantView participant={localParticipant} />
+    </div>
+  )
 }
 
 export function HostBroadcastPanel({ showId, showTitle }: HostBroadcastPanelProps) {
@@ -179,23 +209,7 @@ export function HostBroadcastPanel({ showId, showTitle }: HostBroadcastPanelProp
         <div className="bg-black rounded-lg overflow-hidden aspect-video flex items-center justify-center">
           <StreamVideo client={videoClient}>
             <StreamCall call={call}>
-              {isInStudio ? (
-                <div className="w-full h-full flex items-center justify-center text-white">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">📹</div>
-                    <p className="text-lg font-semibold">You're in the studio!</p>
-                    <p className="text-sm text-gray-300 mt-2">Camera and microphone are enabled</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-white">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">🎥</div>
-                    <p className="text-lg font-semibold">Ready to broadcast</p>
-                    <p className="text-sm text-gray-300 mt-2">Join the studio to start your stream</p>
-                  </div>
-                </div>
-              )}
+              <BroadcastPreview isInStudio={isInStudio} />
             </StreamCall>
           </StreamVideo>
         </div>
