@@ -39,17 +39,18 @@ export function HostProductTools({ showId, products }: HostProductToolsProps) {
 
     setSending(true)
     try {
-      await channel.sendMessage({
+      const message = await channel.sendMessage({
         text: `🛍️ Check out: ${selectedProduct.name}`,
-        customType: "product",
-        productId: selectedProduct.id.toString(),
-        productName: selectedProduct.name,
-        productPriceCents: selectedProduct.price_cents,
-        productImageUrl: selectedProduct.image_url,
-        showId: showId,
+        type: "regular",
+        product_id: selectedProduct.id.toString(),
+        product_name: selectedProduct.name,
+        product_price_cents: selectedProduct.price_cents,
+        product_image_url: selectedProduct.image_url || "",
+        show_id: showId,
+        is_product_message: true,
       })
 
-      console.log("[v0] Product sent successfully")
+      console.log("[v0] Product sent successfully", message)
     } catch (err) {
       console.error("[v0] Error sending product:", err)
       alert("Failed to send product. Please try again.")

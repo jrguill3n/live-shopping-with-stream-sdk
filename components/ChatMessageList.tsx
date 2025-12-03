@@ -12,13 +12,13 @@ function ProductMessageCard() {
 
   if (!message) return null
 
-  const productId = message.productId as string | undefined
-  const productName = message.productName as string | undefined
-  const productPriceCents = message.productPriceCents as number | undefined
-  const productImageUrl = message.productImageUrl as string | undefined
-  const showId = message.showId as string | undefined
+  const productId = message.product_id as string | undefined
+  const productName = message.product_name as string | undefined
+  const productPriceCents = message.product_price_cents as number | undefined
+  const productImageUrl = message.product_image_url as string | undefined
+  const showId = message.show_id as string | undefined
 
-  console.log("[v0] Product message data:", { productId, productName, productPriceCents, showId })
+  console.log("[v0] Product message data:", { productId, productName, productPriceCents, showId, message })
 
   // If not a product message, render normally
   if (!productId || !productName || !productPriceCents) {
@@ -78,7 +78,7 @@ export function ChatMessageList() {
           return null
         }
 
-        const isProductMessage = message.customType === "product" || !!message.productId
+        const isProductMessage = message.is_product_message === true || !!message.product_id
 
         if (isProductMessage) {
           return (
